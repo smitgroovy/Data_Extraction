@@ -9,9 +9,11 @@ import {
   Eye,
   PanelLeftClose,
   PanelLeft,
+  ChevronDown,
 } from "lucide-react";
 import { useThemeStore } from "@/stores/themeStore";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 const iconMap: Record<string, React.ElementType> = {
   LayoutDashboard,
@@ -22,19 +24,30 @@ const iconMap: Record<string, React.ElementType> = {
   Eye,
 };
 
-const menuItems = [
-  { label: "Dashboard", href: "/dashboard", icon: "LayoutDashboard" },
-  { label: "Workflow", href: "/workflow", icon: "GitBranch" },
+const workflowChildren = [
   { label: "Activities", href: "/workflow/activities", icon: "Activity" },
   { label: "Billing & Charges", href: "/workflow/billing", icon: "Receipt" },
   { label: "Students", href: "/workflow/students", icon: "Users" },
   { label: "Preview", href: "/workflow/preview", icon: "Eye" },
-
 ];
 
 export function Sidebar() {
   const location = useLocation();
   const { sidebarCollapsed, toggleSidebar } = useThemeStore();
+
+  const workflowActive = location.pathname === "/workflow" ||
+    workflowChildren.some((c) => location.pathname.startsWith(c.href));
+
+  const [workflowOpen, setWorkflowOpen] = useState(workflowActive);
+
+  if (!workflowOpen && workflowActive) {
+    setWorkflowOpen(true);
+  }
+
+  const isActive = (href: string) => {
+    if (href === "/dashboard") return location.pathname === href;
+    return location.pathname.startsWith(href);
+  };
 
   return (
     <aside
@@ -62,26 +75,67 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 overflow-y-auto p-2">
-        {menuItems.map((item) => {
-          const Icon = iconMap[item.icon];
-          const isActive = location.pathname === item.href ||
-            (item.href !== "/dashboard" && location.pathname.startsWith(item.href));
-          return (
-            <Link
-              key={item.href}
-              to={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
-                isActive
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              )}
-            >
-              {Icon && <Icon className="h-4 w-4 shrink-0" />}
-              {!sidebarCollapsed && <span>{item.label}</span>}
-            </Link>
-          );
-        })}
+        <Link
+          to="/dashboard"
+          className={cn(
+            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+            isActive("/dashboard")
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          )}
+        >
+          <LayoutDashboard className="h-4 w-4 shrink-0" />
+          {!sidebarCollapsed && <span>Dashboard</span>}
+        </Link>
+
+        <div className="mt-1">
+          <button
+            onClick={() => setWorkflowOpen(!workflowOpen)}
+            className={cn(
+              "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+              workflowActive
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            )}
+          >
+            <GitBranch className="h-4 w-4 shrink-0" />
+            {!sidebarCollapsed && (
+              <>
+                <span className="flex-1 text-left">Workflow</span>
+                <ChevronDown
+                  className={cn(
+                    "h-4 w-4 transition-transform",
+                    workflowOpen && "rotate-180"
+                  )}
+                />
+              </>
+            )}
+          </button>
+
+          {(!sidebarCollapsed && workflowOpen) && (
+            <div className="ml-2 mt-1 space-y-1 border-l pl-2">
+              {workflowChildren.map((item) => {
+                const Icon = iconMap[item.icon];
+                const childActive = isActive(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                      childActive
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    )}
+                  >
+                    {Icon && <Icon className="h-4 w-4 shrink-0" />}
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </nav>
     </aside>
   );

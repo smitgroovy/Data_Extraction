@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Development Progress Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            background-color: #f4f7f6;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #34495e;
+            margin-bottom: 10px;
+        }
+        .card {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 0.85em;
+            background: #e8f4fd;
+            color: #0277bd;
+            border-radius: 15px;
+            margin-right: 5px;
+            font-weight: 600;
+        }
+        .badge.frontend { background-color: #e0f7fa; color: #006064; }
+        .badge.backend { background-color: #f1f8e9; color: #33691e; }
+        .badge.data { background-color: #fff3e0; color: #e65100; }
+        .badge.agent { background-color: #fce4ec; color: #880e4f; }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #95a5a6;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Daily Development Progress Report</h1>
+        <div class="subtitle">Full-Stack Data Processing & Workflow Platform</div>
+        <div><strong>Date:</strong> <span id="date"></span></div>
+    </div>
+
+    <div class="card">
+        <h2>Executive Summary</h2>
+        <p>
+            Today's development focused on building out the structural foundation of the application, utilizing a React 19 Frontend and an Express/Node Backend.
+            The focus was primarily on orchestrating a multi-step CSV processing workflow powered by specialized local AI extraction agents.
+            These separate agents categorize and parse CSV data into precise JSON models for <em>Activities</em>, <em>Billing</em>, and <em>Students</em>.
+        </p>
+    </div>
+
+    <div class="card">
+        <h2>1. Frontend Development <span class="badge frontend">React 19</span> <span class="badge frontend">Tailwind CSS v4</span> <span class="badge frontend">TypeScript</span></h2>
+        <p>Developed a high-performance Single Page Application using Vite, React Router, and a comprehensive set of UI libraries:</p>
+        <ul>
+            <li><strong>Routing & Architecture:</strong> Implemented <code>AppRoutes</code> with <code>react-router-dom</code> to navigate smoothly between <code>/dashboard</code>, <code>/uploads</code>, <code>/reports</code>, and dedicated <code>/workflow/*</code> stages.</li>
+            <li><strong>Component UI Library:</strong> Built custom, accessible components relying on <code>@radix-ui</code> primitives (styled natively as shadcn/ui components). Incorporates <code>Tabs</code>, <code>Dialogs</code>, <code>Dropdowns</code>, <code>Progress</code> bars, and <code>Select</code> elements.</li>
+            <li><strong>Data Display & Interactions:</strong> 
+                <ul>
+                    <li>Integrated <code>@tanstack/react-table</code> for robust, sortable multi-column data grids.</li>
+                    <li>Integrated <code>recharts</code> for rendering analytical dashboard cards (`ChartCard.tsx`, `MetricCard.tsx`).</li>
+                    <li>Utilized <code>framer-motion</code> for smooth stepper transitions in the multi-stage <code>WizardStepper.tsx</code>.</li>
+                </ul>
+            </li>
+            <li><strong>Form & State Management:</strong> Integrated <code>react-hook-form</code> and <code>zod</code> for complex, type-safe validations, ensuring data integrity within workflow views.</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>2. Backend Server infrastructure <span class="badge backend">Express.js</span> <span class="badge backend">Multer</span> <span class="badge backend">TSX</span></h2>
+        <p>Engineered the middleware and API endpoints necessary to bridge the user interface with the local AI file extractor:</p>
+        <ul>
+            <li><strong>Folder & Context Initialization:</strong> Automated generation of the filesystem structure locally upon boot, ensuring <code>data/upload</code>, <code>data/activities</code>, <code>data/billing</code>, and <code>data/students</code> are ready. Temporary system files (<code>_run-*</code>) are aggressively cleaned on startup.</li>
+            <li><strong>File Ingestion API:</strong> Configured <code>multer</code> to intercept incoming file streams, securely timestamping and dropping raw `.csv` deposits into the designated upload directory.</li>
+            <li><strong>Data Unification Endpoints:</strong> Created dynamic read endpoints (e.g., <code>/api/extracted/activities</code>) mapping over JSON arrays produced by agents. Includes intelligent deduplication mapping tracking <code>rec.id</code> variables in Sets to protect against redundant database insertions.</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>3. Agentic Extraction Workflows <span class="badge agent">CLI Automation</span> <span class="badge data">JSON Pipelines</span></h2>
+        <p>Integrated programmatic system shell calls bridging the Node.js API with custom instruction agents:</p>
+        <ul>
+            <li><strong>Process Invocation:</strong> Automated standard library <code>child_process.exec</code> calls spinning up independent CLI instances dynamically executing <code>opencode --agent "[agent_name]"</code> against uploaded targets.</li>
+            <li><strong>Modular Agent Focus:</strong> Directed specific localized markdown instructions toward precise entity extractions:
+                <ul>
+                    <li><em>extract-activities</em> logic mapping out schedules.</li>
+                    <li><em>extract-billing</em> logic partitioning tiers.</li>
+                    <li><em>extract-students</em> extracting user metrics.</li>
+                </ul>
+            </li>
+            <li><strong>Terminal Orchestration:</strong> Implemented non-blocking terminal pop-outs providing transparency by opening visible prompts processing outputs and destroying target `.csv` deposits safely upon completion.</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Next Steps</h2>
+        <ul>
+            <li>Connect frontend React views to the `backend/server/index.ts` API endpoints.</li>
+            <li>Implement automated unit and integration tests across the critical workflow paths (`workflowStore`).</li>
+            <li>Refine the data extraction agents and tie them natively into the file upload dropzone routines.</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        Generated automatically by the Development Environment &bull; Prepared by Smit Patel
+    </div>
+
+    <script>
+        document.getElementById('date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    </script>
+</body>
+</html>

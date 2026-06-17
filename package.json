@@ -1,0 +1,14 @@
+{
+  "name": "product-workspace",
+  "private": true,
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "server": "cd backend && npm start",
+    "extract": "cd backend && npm run extract",
+    "install:all": "cd frontend && npm install && cd ../backend && npm install"
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}

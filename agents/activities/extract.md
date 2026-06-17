@@ -27,7 +27,8 @@ Use keyword matching to detect columns regardless of exact naming:
 
 - If `name` column missing → **ERROR**: report and stop
 - If `category` column missing → **infer** from name/description (see rules.md §3)
-- If `duration` column missing → leave null
+- If `duration` column missing → leave null, **WARNING**: cannot verify uniqueness, each activity treated as new
+- If `ageGroup` column missing → leave null, **WARNING**: cannot verify uniqueness, each activity treated as new
 - If `rate` column missing → leave null (may come from billing)
 - If `unit` column missing → default `"session"`
 - If `code` column missing → auto-generate from name
@@ -37,6 +38,13 @@ Use keyword matching to detect columns regardless of exact naming:
 Infer from name/description when no category column exists:
 - Sports, Arts, STEM, Wellness, Literacy, Language, Academic, Other
 - See `agents/activities/rules.md` §3 for full keyword mapping
+
+## Deduplication
+
+An activity is considered a **duplicate only if all three** fields match: `name` + `ageGroup` + `duration`.
+- Same `name` + same `duration` but different `ageGroup` → **new activity**
+- Same `name` + same `ageGroup` but different `duration` → **new activity**
+- Missing `ageGroup` or `duration` → treated as **unique** (cannot confirm duplicate)
 
 ## Validation
 

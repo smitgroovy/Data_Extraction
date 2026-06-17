@@ -36,6 +36,8 @@ See `agents/students/rules.md` for comprehensive rules on column matching, data 
 
 - If `name` column missing → **ERROR**: report and stop
 - If `activityName` column missing → **ERROR**: report and stop
+- If `parentName` column missing → **WARNING**: cannot verify uniqueness, each record treated as new student
+- If `dateOfBirth` column missing → **WARNING**: cannot verify uniqueness, each record treated as new student
 - If `billingPlan` column missing → **WARNING**: leave null, student won't join to billing plans
 - If no header row → try to detect columns from data patterns
 
@@ -44,6 +46,13 @@ See `agents/students/rules.md` for comprehensive rules on column matching, data 
 - **Separate first/last name columns**: Combine into `name`: `"{firstName} {lastName}"`
 - **Excel serial dates**: Convert number to `YYYY-MM-DD` date string
 - **Mixed date formats**: Handle serial numbers and string dates
+
+## Deduplication
+
+A student is considered a **duplicate only if all three** fields match: `name` + `parentName` + `dateOfBirth`.
+- Same `name` + same `parentName` but different `dateOfBirth` → **new student**
+- Same `name` but different `parentName` → **new student**
+- Missing `parentName` or `dateOfBirth` → treated as **unique** (cannot confirm duplicate)
 
 ## Validation
 

@@ -16,11 +16,11 @@ Examples: `Description`, `Details`, `Notes`, `About Program`, `Desc`, `Summary`
 Keywords: `category`, `type`, `program type`, `activity type`, `department`, `area`, `group`, `classification`
 Examples: `Category`, `Type`, `Program Type`, `Department`, `Classification`
 
-### `duration` (optional)
+### `duration` (REQUIRED for dedup)
 Keywords: `duration`, `minutes`, `min`, `length`, `time`, `hours`, `hrs`
 Examples: `Duration`, `Duration (Minutes)`, `Minutes`, `Length (min)`, `Time`, `Hours`
 
-### `ageGroup` (optional)
+### `ageGroup` (REQUIRED for dedup)
 Keywords: `age`, `age group`, `target age`, `grade`, `grade level`, `ages`, `suitable for`
 Examples: `Age Group`, `Age`, `Target Age`, `Grade Level`, `Ages`, `Suitable For`
 
@@ -47,8 +47,8 @@ Examples: `Status`, `State`
 | No `name` column found | **ERROR**: Cannot extract — reject file, show "No activity name column found. Expected a column named Activity, Program, Name, Service, or similar." |
 | No `description` column | Set to empty string, **WARNING**: "No description column found" |
 | No `category` column | **Infer** from name/description (see Section 3), **INFO**: "Category inferred from activity name" |
-| No `duration` column | Leave null, **INFO**: "Duration column not found" |
-| No `ageGroup` column | Leave null |
+| No `duration` column | Leave null, **WARNING**: "Duration column not found — cannot verify uniqueness, each activity treated as new" |
+| No `ageGroup` column | Leave null, **WARNING**: "Age group column not found — cannot verify uniqueness, each activity treated as new" |
 | No `rate` column | Leave null (rate may be in billing file) |
 | No `unit` column | Default to "session", **INFO**: "Unit not specified, defaulting to 'session'" |
 | No `code` column | **Auto-generate** from name (lowercase slug) |
@@ -74,7 +74,12 @@ When no category column exists, infer from `name` and `description` using keywor
 - Strip leading/trailing whitespace from all string fields
 - Convert numeric fields (duration, rate) to numbers — parse integers/floats, strip currency symbols (`$`, `₹`, `€`, `,`)
 - Generate `code` as lowercase slug from `name`: replace spaces with hyphens, remove special chars
-- Remove duplicate rows by `name` (keep first occurrence) — **WARNING**: "Duplicate activity '{name}' found, keeping first occurrence"
+- **Deduplication rule**: An activity record is considered a **duplicate only if all three** of `name` + `ageGroup` + `duration` match an existing record. If any one of these fields differs, treat the record as a **new activity**.
+  - **Rule 1**: Same `name` + same `duration` but different `ageGroup` → **new activity** (e.g., same program for different age groups)
+  - **Rule 2**: Same `name` + same `ageGroup` but different `duration` → **new activity** (e.g., same program with different session lengths)
+  - **Rule 3**: Same `name` but different `ageGroup` AND different `duration` → **new activity**
+  - Keep the first occurrence when an exact match (all three fields) is found — **WARNING**: "Duplicate activity '{name}' with ageGroup '{ageGroup}' and duration '{duration}' found, keeping first occurrence"
+  - If `ageGroup` or `duration` is missing from a row, treat it as **unique** (cannot confirm duplicate) — **WARNING**: "Row {index}: Cannot verify uniqueness for '{name}' — missing ageGroup or duration, treating as new activity"
 
 ## 5. Validation
 

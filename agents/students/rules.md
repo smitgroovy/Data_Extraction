@@ -22,11 +22,11 @@ Examples: `Billing Plan`, `Plan`, `Plan Code`, `Payment Plan`, `Fee Plan`, `Char
 Keywords: `charge amount`, `amount`, `fee`, `charge`, `cost`, `price`, `enrollment fee`, `paid`, `charges`
 Examples: `Charge Amount`, `Amount`, `Fee`, `Charge`, `Cost`, `Enrollment Fee`
 
-### `parentName` (optional)
+### `parentName` (REQUIRED for dedup)
 Keywords: `parent`, `parent name`, `guardian`, `guardian name`, `parent/guardian`
 Examples: `Parent Name`, `Parent`, `Guardian`, `Guardian Name`
 
-### `dob` / `dateOfBirth` (optional)
+### `dob` / `dateOfBirth` (REQUIRED for dedup)
 Keywords: `dob`, `date of birth`, `birth date`, `birthday`, `birth`
 Examples: `DOB`, `Date of Birth`, `Birth Date`, `Birthday`
 
@@ -64,7 +64,11 @@ Examples: `Grade`, `Grade Level`, `Class`, `Standard`, `Year`
   - Excel epoch = Dec 30, 1899
   - `date = new Date((serial - 1) * 86400000 + new Date(1899, 11, 30).getTime())`
 - If date column has mixed formats (serial numbers and strings), handle each appropriately
-- Deduplicate by student `name` + `activityName` combination (keep first) — **WARNING**: "Duplicate enrollment for {name} in {activityName}, keeping first record"
+- **Deduplication rule**: A student record is considered a **duplicate only if all three** of `name` + `parentName` + `dateOfBirth` match an existing record. If any one of these fields differs, treat the record as a **new student**.
+  - **Rule 1**: Same `name` + same `parentName` but different `dateOfBirth` → **new student** (different person)
+  - **Rule 2**: Same `name` but different `parentName` → **new student** (different person)
+  - Keep the first occurrence when an exact match (all three fields) is found — **WARNING**: "Duplicate student '{name}' with parent '{parentName}' and DOB '{dateOfBirth}' found, keeping first record"
+  - If `parentName` or `dateOfBirth` is missing from a row, treat it as **unique** (cannot confirm duplicate) — **WARNING**: "Row {index}: Cannot verify uniqueness for '{name}' — missing parentName or dateOfBirth, treating as new student"
 
 ## 4. Validation
 
@@ -103,6 +107,8 @@ Companies may use different terms - understand semantic equivalence:
     "source": "Student.xlsx",
     "extractedAt": "2026-06-17T12:00:00.000Z",
     "name": "Student 01",
+    "parentName": "Parent Name",
+    "dateOfBirth": "2014-05-12",
     "activityName": "Basketball Fundamentals",
     "billingPlan": "8X",
     "status": "active"

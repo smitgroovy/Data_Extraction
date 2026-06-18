@@ -7,6 +7,7 @@ import {
   Receipt,
   Users,
   Eye,
+  Database,
   PanelLeftClose,
   PanelLeft,
   ChevronDown,
@@ -86,6 +87,19 @@ export function Sidebar() {
         >
           <LayoutDashboard className="h-4 w-4 shrink-0" />
           {!sidebarCollapsed && <span>Dashboard</span>}
+        </Link>
+
+        <Link
+          to="/sessions"
+          className={cn(
+            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+            isActive("/sessions")
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          )}
+        >
+          <Database className="h-4 w-4 shrink-0" />
+          {!sidebarCollapsed && <span>Sessions</span>}
         </Link>
 
         <div className="mt-1">

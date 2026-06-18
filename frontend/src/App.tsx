@@ -6,6 +6,7 @@ import WorkflowActivitiesPage from "@/pages/WorkflowActivities";
 import WorkflowBillingPage from "@/pages/WorkflowBilling";
 import WorkflowStudentsPage from "@/pages/WorkflowStudents";
 import WorkflowPreviewPage from "@/pages/WorkflowPreview";
+import SessionsPage from "@/pages/Sessions";
 
 
 function AppRoutes() {
@@ -18,6 +19,7 @@ function AppRoutes() {
       <Route path="/workflow/billing" element={<WorkflowBillingPage />} />
       <Route path="/workflow/students" element={<WorkflowStudentsPage />} />
       <Route path="/workflow/preview" element={<WorkflowPreviewPage />} />
+      <Route path="/sessions" element={<SessionsPage />} />
 
     </Routes>
   );

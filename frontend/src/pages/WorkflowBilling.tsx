@@ -6,9 +6,10 @@ import { DataTable } from "@/components/features/DataTable";
 import { WizardStepper } from "@/components/features/WizardStepper";
 import { UploadDropzone } from "@/components/features/UploadDropzone";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useWorkflowStore } from "@/stores/workflowStore";
-import { ArrowRight, ArrowLeft, Upload, Table2, FileSpreadsheet, Loader2, AlertCircle, Terminal } from "lucide-react";
+import { ArrowRight, ArrowLeft, Upload, Table2, FileSpreadsheet, Loader2, AlertCircle, Terminal, Building2 } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 
 const HIDDEN_KEYS = new Set(["id", "source", "extractedAt", "recordType"]);
@@ -58,6 +59,7 @@ function WorkflowBillingPage() {
   const { goBack } = useWorkflowStore();
   const [showTable, setShowTable] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [providerName, setProviderName] = useState("");
   const [extracting, setExtracting] = useState(false);
   const [extractResult, setExtractResult] = useState<{ success: boolean; count: number; message: string } | null>(null);
   const [extractedRecords, setExtractedRecords] = useState<any[]>([]);
@@ -124,6 +126,7 @@ function WorkflowBillingPage() {
     try {
       const formData = new FormData();
       formData.append("file", uploadedFiles[0]);
+      formData.append("providerName", providerName);
 
       const res = await fetch(`${API}/api/extract/billing`, {
         method: "POST",
@@ -169,6 +172,20 @@ function WorkflowBillingPage() {
       ) : (
         <Card>
           <CardContent className="p-6">
+            <div className="mb-4">
+              <label className="text-sm font-medium mb-1.5 block text-muted-foreground">
+                Provider Name
+              </label>
+              <div className="relative">
+                <Building2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="e.g. Sunrise Academy"
+                  value={providerName}
+                  onChange={(e) => setProviderName(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </div>
             <UploadDropzone
               onFilesAdded={(files) => setUploadedFiles((prev) => [...prev, ...files])}
             />

@@ -30,6 +30,20 @@ fs.mkdirSync(studentsDir, { recursive: true });
 fs.readdirSync(dataDir)
   .filter((f) => f.startsWith("_run-"))
   .forEach((f) => fs.unlinkSync(path.join(dataDir, f)));
+// Clean up upload files older than 1 hour (safety net for orphaned uploads)
+const ONE_HOUR = 60 * 60 * 1000;
+const now = Date.now();
+fs.readdirSync(uploadDir).forEach((f) => {
+  const filePath = path.join(uploadDir, f);
+  try {
+    const stats = fs.statSync(filePath);
+    if (now - stats.mtimeMs > ONE_HOUR) {
+      fs.unlinkSync(filePath);
+    }
+  } catch {
+    // race condition — file already deleted
+  }
+});
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, uploadDir),
@@ -44,7 +58,7 @@ const upload = multer({ storage });
 function openTerminal(agentName: string, filePath: string, category: string): void {
   const prompt = `Extract ${category} from ${filePath} and save JSON output to data/${category}/`;
   const child = exec(
-    `start "Extraction" cmd /c "cd /d \"${rootDir}\" && opencode --agent \"${agentName}\" --prompt \"${prompt}\" & del /f \"${filePath}\""`
+    `start "Extraction" cmd /c "cd /d \"${rootDir}\" && opencode --agent \"${agentName}\" --prompt \"${prompt}\" && del /f \"${filePath}\""`
   );
   child.on("error", () => {
     // terminal failed to open — non-critical, extraction can still be done manually
@@ -94,6 +108,19 @@ app.get("/api/extracted/activities", (_req, res) => {
     });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete("/api/uploads/:filename", (req, res) => {
+  try {
+    const filePath = path.join(uploadDir, req.params.filename);
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: "File not found", filename: req.params.filename });
+    }
+    fs.unlinkSync(filePath);
+    return res.json({ success: true, deleted: req.params.filename });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
   }
 });
 

@@ -62,6 +62,7 @@ function WorkflowBillingPage() {
   const [extractResult, setExtractResult] = useState<{ success: boolean; count: number; message: string } | null>(null);
   const [extractedRecords, setExtractedRecords] = useState<any[]>([]);
   const [isPolling, setIsPolling] = useState(false);
+  const [serverFileName, setServerFileName] = useState<string | null>(null);
 
   async function fetchData() {
     try {
@@ -88,12 +89,22 @@ function WorkflowBillingPage() {
             clearInterval(interval);
             setIsPolling(false);
             setShowTable(true);
+            if (serverFileName) {
+              fetch(`${API}/api/uploads/${serverFileName}`, { method: "DELETE" }).catch(() => {});
+            }
+            setUploadedFiles([]);
+            setServerFileName(null);
           }
         } else if (data.files && data.files.length > 0) {
           if (!cancelled) {
             setExtractResult({ success: true, count: 0, message: "Extraction complete — no records could be extracted from the file" });
             clearInterval(interval);
             setIsPolling(false);
+            if (serverFileName) {
+              fetch(`${API}/api/uploads/${serverFileName}`, { method: "DELETE" }).catch(() => {});
+            }
+            setUploadedFiles([]);
+            setServerFileName(null);
           }
         }
       } catch {
@@ -123,6 +134,8 @@ function WorkflowBillingPage() {
       if (res.ok) {
         setExtractResult({ success: true, count: 0, message: data.message });
         setIsPolling(true);
+        const filename = data.file?.split(/[\\/]/).pop();
+        if (filename) setServerFileName(filename);
       } else {
         setExtractResult({ success: false, count: 0, message: data.error || "Extraction failed" });
       }

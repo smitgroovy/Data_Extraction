@@ -1,0 +1,102 @@
+[
+  {
+    "recordType": "billing",
+    "id": "bill-1781701188199-0",
+    "source": "1781701028093_billing and charges.xlsx",
+    "extractedAt": "2026-06-17T12:59:48.199Z",
+    "name": "Basketball Fundamentals",
+    "billingAmount": 4000,
+    "billingPlan": "8X",
+    "currency": "INR"
+  },
+  {
+    "recordType": "billing",
+    "id": "bill-1781701188199-1",
+    "source": "1781701028093_billing and charges.xlsx",
+    "extractedAt": "2026-06-17T12:59:48.199Z",
+    "name": "Creative Art Workshop",
+    "billingAmount": 3500,
+    "billingPlan": "8X",
+    "currency": "INR"
+  },
+  {
+    "recordType": "billing",
+    "id": "bill-1781701188199-2",
+    "source": "1781701028093_billing and charges.xlsx",
+    "extractedAt": "2026-06-17T12:59:48.199Z",
+    "name": "STEM Robotics Lab",
+    "billingAmount": 7500,
+    "billingPlan": "12X",
+    "currency": "INR"
+  },
+  {
+    "recordType": "billing",
+    "id": "bill-1781701188199-3",
+    "source": "1781701028093_billing and charges.xlsx",
+    "extractedAt": "2026-06-17T12:59:48.199Z",
+    "name": "Yoga & Mindfulness",
+    "billingAmount": 2500,
+    "billingPlan": "8X",
+    "currency": "INR"
+  },
+  {
+    "recordType": "billing",
+    "id": "bill-1781701188199-4",
+    "source": "1781701028093_billing and charges.xlsx",
+    "extractedAt": "2026-06-17T12:59:48.199Z",
+    "name": "Public Speaking Club",
+    "billingAmount": 3000,
+    "billingPlan": "10X",
+    "currency": "INR"
+  },
+  {
+    "recordType": "billing",
+    "id": "bill-1781701188199-5",
+    "source": "1781701028093_billing and charges.xlsx",
+    "extractedAt": "2026-06-17T12:59:48.199Z",
+    "name": "Coding for Kids",
+    "billingAmount": 6500,
+    "billingPlan": "12X",
+    "currency": "INR"
+  },
+  {
+    "recordType": "billing",
+    "id": "bill-1781701188199-6",
+    "source": "1781701028093_billing and charges.xlsx",
+    "extractedAt": "2026-06-17T12:59:48.199Z",
+    "name": "Science Discovery Lab",
+    "billingAmount": 4500,
+    "billingPlan": "10X",
+    "currency": "INR"
+  },
+  {
+    "recordType": "billing",
+    "id": "bill-1781701188199-7",
+    "source": "1781701028093_billing and charges.xlsx",
+    "extractedAt": "2026-06-17T12:59:48.199Z",
+    "name": "Music & Rhythm Class",
+    "billingAmount": 3800,
+    "billingPlan": "8X",
+    "currency": "INR"
+  },
+  {
+    "recordType": "billing",
+    "id": "bill-1781701188199-8",
+    "source": "1781701028093_billing and charges.xlsx",
+    "extractedAt": "2026-06-17T12:59:48.199Z",
+    "name": "Chess Strategy Workshop",
+    "billingAmount": 3200,
+    "billingPlan": "10X",
+    "currency": "INR"
+  },
+  {
+    "recordType": "billing",
+    "id": "bill-1781701188199-9",
+    "source": "1781701028093_billing and charges.xlsx",
+    "extractedAt": "2026-06-17T12:59:48.199Z",
+    "name": "Soccer Skills Training",
+    "billingAmount": 5000,
+    "billingPlan": "12X",
+    "currency": "INR"
+  }
+]

@@ -28,7 +28,6 @@ yarn-error.log*
 # Custom Project Directories
 Temp/
 agents/uploads/
-.opencode/
 
 # OS / Editor Files
 .DS_Store
